@@ -9,8 +9,8 @@
 // ============================================
 
 const SUPABASE_CONFIG = {
-  url: 'YOUR_SUPABASE_URL',        // 例如 https://abc123.supabase.co
-  anonKey: 'YOUR_SUPABASE_ANON_KEY' // 在 Supabase 项目 Settings > API 中找到
+  url: 'https://vrkvlddlpnsseldjrtpt.supabase.co',        // 例如 https://abc123.supabase.co
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZya3ZsZGRscG5zc2VsZGpydHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzNDY4NDUsImV4cCI6MjA5OTkyMjg0NX0.mr_mXfRfvfTDvdBjZ37M2kv7CW4ltVvZftTAEZvLCXA' // 在 Supabase 项目 Settings > API 中找到
 };
 
 const USE_SUPABASE = SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_URL';
