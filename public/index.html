@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2509班 — 汤阴县高级中学</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-brand">
+        <span class="nav-brand-icon">玖</span>
+        <span class="nav-brand-text">2509</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#intro" data-section="intro">班级介绍</a></li>
+        <li><a href="#leaders" data-section="leaders">班干部</a></li>
+        <li><a href="#students" data-section="students">同学录</a></li>
+        <li><a href="#forum" data-section="forum">交流区</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="hero-bg-pattern"></div>
+    <div class="hero-content">
+      <div class="hero-watermark" aria-hidden="true">贰伍零玖</div>
+      <p class="hero-eyebrow">汤阴县高级中学 · 2025级</p>
+      <h1 class="hero-title">
+        <span class="hero-title-line"><span class="hero-title-num">2509</span>班</span>
+      </h1>
+      <p class="hero-motto" id="heroMotto">博学笃志，切问近思</p>
+      <div class="hero-stats">
+        <div class="hero-stat reveal">
+          <span class="hero-stat-num" data-count="42">42</span>
+          <span class="hero-stat-label">位同学</span>
+        </div>
+        <div class="hero-stat reveal">
+          <span class="hero-stat-num">8</span>
+          <span class="hero-stat-label">位班委</span>
+        </div>
+        <div class="hero-stat reveal">
+          <span class="hero-stat-num">6</span>
+          <span class="hero-stat-label">门学科</span>
+        </div>
+      </div>
+      <div class="hero-scroll-hint">
+        <span>探索我们的班级</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 班级介绍 -->
+  <section class="section section-intro" id="intro">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="section-number">01</span>
+        <h2 class="section-title">班级介绍</h2>
+        <p class="section-subtitle">每一个灵魂都值得被看见</p>
+      </div>
+      <div class="intro-grid">
+        <div class="intro-text reveal">
+          <p class="intro-description" id="introDescription"></p>
+        </div>
+        <div class="intro-info-card reveal">
+          <div class="info-item">
+            <span class="info-label">成立时间</span>
+            <span class="info-value" id="infoFounded"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">班主任</span>
+            <span class="info-value" id="infoTeacher"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">班级人数</span>
+            <span class="info-value" id="infoCount"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">主修课程</span>
+            <span class="info-value" id="infoSubjects"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 班干部 -->
+  <section class="section section-leaders" id="leaders">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="section-number">02</span>
+        <h2 class="section-title">班干部</h2>
+        <p class="section-subtitle">引领与服务，责任与担当</p>
+      </div>
+      <div class="leaders-grid" id="leadersGrid">
+        <!-- JS 动态渲染 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 同学录 -->
+  <section class="section section-students" id="students">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="section-number">03</span>
+        <h2 class="section-title">同学录</h2>
+        <p class="section-subtitle">四十二颗星辰，各自闪耀</p>
+      </div>
+      <div class="students-toolbar reveal">
+        <div class="search-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" id="studentSearch" placeholder="搜索同学姓名...">
+        </div>
+        <div class="filter-tags">
+          <button class="filter-tag active" data-filter="all">全部</button>
+          <button class="filter-tag" data-filter="班干部">班干部</button>
+          <button class="filter-tag" data-filter="课代表">课代表</button>
+        </div>
+      </div>
+      <div class="students-grid" id="studentsGrid">
+        <!-- JS 动态渲染 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 交流区 -->
+  <section class="section section-forum" id="forum">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="section-number">04</span>
+        <h2 class="section-title">交流区</h2>
+        <p class="section-subtitle">老师与同学自由交流的空间</p>
+      </div>
+
+      <!-- New Post Form -->
+      <div class="forum-composer reveal" id="forumComposer">
+        <h3 class="composer-title">发布新帖</h3>
+        <div class="composer-fields">
+          <input type="text" id="postAuthor" class="composer-input composer-input--half" placeholder="你的名字">
+          <select id="postRole" class="composer-input composer-input--half">
+            <option value="student">同学</option>
+            <option value="teacher">老师</option>
+          </select>
+          <input type="text" id="postTitle" class="composer-input composer-input--full" placeholder="帖子标题">
+          <textarea id="postContent" class="composer-textarea" rows="4" placeholder="想说点什么..."></textarea>
+          <button id="submitPost" class="btn btn-primary">发布帖子</button>
+        </div>
+      </div>
+
+      <!-- Post List -->
+      <div class="forum-posts" id="forumPosts">
+        <!-- JS 动态渲染 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Post Detail Modal -->
+  <div class="modal-overlay" id="postModal">
+    <div class="modal">
+      <button class="modal-close" id="closeModal">&times;</button>
+      <div class="modal-content" id="modalContent">
+        <!-- JS 动态渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-icon">玖</span>
+        <span>2509班 · 汤阴县高级中学</span>
+      </div>
+      <p class="footer-motto">青春不散场，未来皆可期</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/forum.js"></script>
+</body>
+</html>
