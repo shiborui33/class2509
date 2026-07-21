@@ -445,6 +445,7 @@ body {
   line-height: 2;
   color: var(--ink-light);
   text-indent: 2em;
+  word-break: break-all;
 }
 
 .intro-info-card {
@@ -1729,27 +1730,31 @@ body {
   }
 
   .hero-title {
-    font-size: 2rem;
+    font-size: 2.3rem;
+    letter-spacing: -1px;
   }
 
   .hero-motto {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
+    white-space: normal;
+    word-break: keep-all;
+    padding: 0 0.5rem;
   }
 
   .hero-stats {
-    gap: 1.25rem;
+    gap: 1rem;
   }
 
   .hero-watermark {
-    font-size: 3.5rem;
+    font-size: 2.8rem;
   }
 
   .hero-stat-num {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
   }
 
   .hero-stat-label {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
 
   /* Section */
@@ -1772,9 +1777,10 @@ body {
 
   /* 班级介绍 */
   .intro-description {
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     line-height: 1.75;
-    text-indent: 1.2em;
+    text-indent: 1em;
+    word-break: break-all;
   }
 
   /* 班干部 */
