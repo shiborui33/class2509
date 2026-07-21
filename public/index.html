@@ -21,7 +21,7 @@
         <li><a href="#intro" data-section="intro">班级介绍</a></li>
         <li><a href="#leaders" data-section="leaders">班干部</a></li>
         <li><a href="#students" data-section="students">同学录</a></li>
-        <li><a href="#forum" data-section="forum">交流区</a></li>
+        <li><a href="forum.html" data-section="forum">交流区</a></li>
         <li><a href="#" id="navLoginBtn" class="nav-login-link">登录</a></li>
       </ul>
       <button class="nav-toggle" id="navToggle" aria-label="菜单">
@@ -138,7 +138,7 @@
     </div>
   </section>
 
-  <!-- 交流区 -->
+  <!-- 交流区入口 -->
   <section class="section section-forum" id="forum">
     <div class="section-inner">
       <div class="section-header reveal">
@@ -146,28 +146,9 @@
         <h2 class="section-title">交流区</h2>
         <p class="section-subtitle">老师与同学自由交流的空间</p>
       </div>
-
-      <!-- New Post Form -->
-      <div class="forum-composer reveal" id="forumComposer">
-        <h3 class="composer-title">发布新帖</h3>
-        <div id="composerLoginTip" style="display:none;text-align:center;padding:1rem 0;color:var(--text-muted);font-size:0.9rem">
-          🔐 <a href="#" onclick="document.getElementById('navLoginBtn').click();return false" style="color:var(--accent);font-weight:600">登录</a> 后即可发帖
-        </div>
-        <div class="composer-fields" id="composerFields">
-          <input type="text" id="postAuthor" class="composer-input composer-input--half" placeholder="你的名字">
-          <select id="postRole" class="composer-input composer-input--half">
-            <option value="student">同学</option>
-            <option value="teacher">老师</option>
-          </select>
-          <input type="text" id="postTitle" class="composer-input composer-input--full" placeholder="帖子标题">
-          <textarea id="postContent" class="composer-textarea" rows="4" placeholder="想说点什么..."></textarea>
-          <button id="submitPost" class="btn btn-primary">发布帖子</button>
-        </div>
-      </div>
-
-      <!-- Post List -->
-      <div class="forum-posts" id="forumPosts">
-        <!-- JS 动态渲染 -->
+      <div class="forum-cta reveal">
+        <p style="font-size:1.1rem;margin-bottom:1.5rem;color:var(--text-muted)">学习讨论、班级通知、活动策划、闲聊灌水——全在这里。</p>
+        <a href="forum.html" class="btn btn-primary" style="display:inline-block;text-decoration:none;font-size:1rem;padding:0.9rem 2.5rem">进入交流区 →</a>
       </div>
     </div>
   </section>
@@ -222,6 +203,5 @@
 
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/forum.js"></script>
 </body>
 </html>

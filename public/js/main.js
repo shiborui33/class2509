@@ -197,7 +197,7 @@ function handleScrollReveal() {
 // ============================================
 
 function updateActiveNav() {
-  const sections = ['intro', 'leaders', 'students', 'forum'];
+  const sections = ['intro', 'leaders', 'students'];
   const navLinks = document.querySelectorAll('.nav-links a');
   const scrollPos = window.scrollY + 120;
 
