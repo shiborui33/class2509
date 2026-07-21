@@ -22,6 +22,7 @@
         <li><a href="#leaders" data-section="leaders">班干部</a></li>
         <li><a href="#students" data-section="students">同学录</a></li>
         <li><a href="#forum" data-section="forum">交流区</a></li>
+        <li><a href="#" id="navLoginBtn" class="nav-login-link">登录</a></li>
       </ul>
       <button class="nav-toggle" id="navToggle" aria-label="菜单">
         <span></span><span></span><span></span>
@@ -149,7 +150,10 @@
       <!-- New Post Form -->
       <div class="forum-composer reveal" id="forumComposer">
         <h3 class="composer-title">发布新帖</h3>
-        <div class="composer-fields">
+        <div id="composerLoginTip" style="display:none;text-align:center;padding:1rem 0;color:var(--text-muted);font-size:0.9rem">
+          🔐 <a href="#" onclick="document.getElementById('navLoginBtn').click();return false" style="color:var(--accent);font-weight:600">登录</a> 后即可发帖
+        </div>
+        <div class="composer-fields" id="composerFields">
           <input type="text" id="postAuthor" class="composer-input composer-input--half" placeholder="你的名字">
           <select id="postRole" class="composer-input composer-input--half">
             <option value="student">同学</option>
@@ -178,6 +182,32 @@
     </div>
   </div>
 
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal" style="display:none">
+    <div class="modal" style="max-width:420px">
+      <button class="modal-close" id="closeAuthModal">&times;</button>
+      <div class="modal-content" style="text-align:center">
+        <h2 class="modal-post-title" style="margin-bottom:1.5rem" id="authTitle">登录</h2>
+        <div id="authForm">
+          <input type="text" id="authDisplayName" class="composer-input composer-input--full" style="margin-bottom:0.75rem;display:none" placeholder="你的姓名">
+          <input type="email" id="authEmail" class="composer-input composer-input--full" style="margin-bottom:0.75rem" placeholder="邮箱">
+          <input type="password" id="authPassword" class="composer-input composer-input--full" style="margin-bottom:1rem" placeholder="密码">
+          <p id="authError" style="color:#e53e3e;font-size:0.85rem;margin-bottom:0.75rem;display:none"></p>
+          <button id="authSubmitBtn" class="btn btn-primary" style="width:100%">登录</button>
+          <p style="margin-top:1rem;font-size:0.85rem;color:var(--text-muted)">
+            <span id="authSwitchText">还没有账号？</span>
+            <a href="#" id="authSwitchLink" style="color:var(--accent);text-decoration:none">注册</a>
+          </p>
+        </div>
+        <div id="authUserInfo" style="display:none">
+          <p style="margin-bottom:0.5rem">已登录：<strong id="authUserName"></strong></p>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem"><span id="authUserRole"></span></p>
+          <button id="authLogoutBtn" class="btn btn-primary" style="width:100%;background:var(--ink)">退出登录</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-inner">
@@ -189,6 +219,7 @@
     </div>
   </footer>
 
+  <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
   <script src="js/forum.js"></script>
 </body>
