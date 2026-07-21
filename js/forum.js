@@ -206,8 +206,14 @@ window.doReply = doReply;
 // 发帖
 // ============================================
 
-document.getElementById('submitPost').addEventListener('click', async function() {
-  if (!A.user) { alert('请先登录'); return; }
+window.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('submitPost');
+  if (!btn) { console.error('submitPost按钮未找到'); return; }
+  console.log('✅ 发帖按钮已绑定');
+
+  btn.addEventListener('click', async function() {
+    console.log('🖱️ 发帖按钮被点击');
+    if (!A.user) { alert('请先登录后再发帖'); console.log('❌ 未登录'); return; }
   var btn = this;
   var title = document.getElementById('postTitle').value.trim();
   var content = document.getElementById('postContent').value.trim();
@@ -243,6 +249,7 @@ document.getElementById('submitPost').addEventListener('click', async function()
   document.getElementById('clearMedia').style.display = 'none';
   btn.textContent = '发布帖子'; btn.disabled = false;
   document.getElementById('forumPosts').scrollIntoView({ behavior: 'smooth' });
+  });
 });
 
 // ============================================
