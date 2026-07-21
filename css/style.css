@@ -166,6 +166,16 @@ body {
   width: 100%;
 }
 
+.nav-back-link a {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 480px) {
+  .nav-back-link a { font-size: 0; }
+  .nav-back-link a::before { content: '←'; font-size: 1rem; }
+}
+
 .nav-login-link {
   color: var(--accent) !important;
   font-weight: 600;
@@ -1602,6 +1612,8 @@ body {
   }
 
   /* ---- 交流区 ---- */
+  #forumPage { padding-top: 5rem !important; }
+
   .forum-composer {
     padding: var(--space-md);
   }
@@ -1849,9 +1861,16 @@ body {
   }
 
   /* 交流区 */
+  #forumPage { padding-top: 4rem !important; }
+
   .forum-composer {
     padding: var(--space-sm);
     border-radius: var(--radius-md);
+  }
+
+  .forum-composer label[for="postMedia"] {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.5rem;
   }
 
   .composer-title {
