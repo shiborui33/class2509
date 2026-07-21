@@ -61,8 +61,14 @@ async function doRegister(displayName, email, password) {
     throw new Error(e.msg || '注册失败');
   }
   var data = await r.json();
-  A.token = data.access_token || data.session.access_token;
+  A.token = data.access_token || (data.session && data.session.access_token) || null;
   A.user = data.user;
+  if (!A.token) {
+    // 可能在Supabase开启了邮箱确认，需要先登录
+    setAuthMode(true);
+    showError('注册成功！请登录（如果开启了邮箱确认，请先去邮箱点击确认链接）');
+    return;
+  }
   await loadProfile();
   // 等待 profile 触发器创建完成
   await new Promise(function(resolve) { setTimeout(resolve, 500); });
