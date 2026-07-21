@@ -1,6 +1,7 @@
 /**
  * 2509班 论坛 — 认证版（含图片/视频上传）
  */
+var A = window.AUTH;
 var posts = [], useServer = false, pendingMediaUrl = null, pendingMediaType = null;
 
 function sf(path, options) {
