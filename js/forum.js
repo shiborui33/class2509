@@ -217,12 +217,11 @@ window.addEventListener('DOMContentLoaded', function() {
   var btn = this;
   var title = document.getElementById('postTitle').value.trim();
   var content = document.getElementById('postContent').value.trim();
-  if (!title || !content) { alert('请填写标题和内容'); return; }
+  if (!title || !content) { alert('请填写标题和内容'); console.log('❌ 空表单'); return; }
 
-  document.getElementById('postAuthor').value = A.user.display_name;
-  document.getElementById('postRole').value = A.user.role || 'student';
-  var author = A.user.display_name;
+  var author = A.user.display_name || A.user.email;
   var role = A.user.role || 'student';
+  console.log('📝 发帖:', {title, author, role});
 
   btn.textContent = '发布中...'; btn.disabled = true;
   pendingMediaUrl = null; pendingMediaType = null;

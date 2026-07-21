@@ -40,15 +40,7 @@
       <!-- New Post Form -->
       <div class="forum-composer reveal" id="forumComposer">
         <h3 class="composer-title">发布新帖</h3>
-        <div id="composerLoginTip" style="display:none;text-align:center;padding:1rem 0;color:var(--text-muted);font-size:0.9rem">
-          🔐 <a href="#" onclick="document.getElementById('navLoginBtn').click();return false" style="color:var(--accent);font-weight:600">登录</a> 后即可发帖
-        </div>
         <div class="composer-fields" id="composerFields">
-          <input type="text" id="postAuthor" class="composer-input composer-input--half" placeholder="你的名字">
-          <select id="postRole" class="composer-input composer-input--half">
-            <option value="student">同学</option>
-            <option value="teacher">老师</option>
-          </select>
           <input type="text" id="postTitle" class="composer-input composer-input--full" placeholder="帖子标题">
           <textarea id="postContent" class="composer-textarea" rows="4" placeholder="想说点什么..."></textarea>
           <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem">
