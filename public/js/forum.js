@@ -386,7 +386,8 @@ window._submitReply = submitReply;
 // Submit New Post
 // ============================================
 
-document.getElementById('submitPost').addEventListener('click', async () => {
+document.getElementById('submitPost').addEventListener('click', async function() {
+  const btn = this;
   const author = document.getElementById('postAuthor').value.trim();
   const role = document.getElementById('postRole').value;
   const title = document.getElementById('postTitle').value.trim();
@@ -397,11 +398,21 @@ document.getElementById('submitPost').addEventListener('click', async () => {
     return;
   }
 
+  btn.textContent = '发布中...';
+  btn.disabled = true;
+
   const postData = { author, role: role || 'student', title, content };
   let newPost = null;
 
+  // Supabase 发帖（带5秒超时）
   if (USE_SUPABASE && supabase) {
-    newPost = await savePostToSupabase(postData);
+    try {
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+      newPost = await Promise.race([savePostToSupabase(postData), timeout]);
+    } catch (e) {
+      console.warn('Supabase发帖超时或失败，降级本地存储:', e.message);
+    }
+
     if (newPost) {
       posts.unshift({
         id: newPost.id,
@@ -415,6 +426,7 @@ document.getElementById('submitPost').addEventListener('click', async () => {
     }
   }
 
+  // 降级：localStorage
   if (!newPost) {
     newPost = savePostLocal(postData);
     posts.unshift(newPost);
@@ -423,11 +435,11 @@ document.getElementById('submitPost').addEventListener('click', async () => {
 
   renderPostList();
 
-  // Clear form
   document.getElementById('postTitle').value = '';
   document.getElementById('postContent').value = '';
+  btn.textContent = '发布帖子';
+  btn.disabled = false;
 
-  // Scroll to new post
   document.getElementById('forumPosts').scrollIntoView({ behavior: 'smooth' });
 });
 
