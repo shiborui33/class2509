@@ -57,9 +57,6 @@ function renderLeaders() {
       <h3 class="leader-name">${nameDisplay}</h3>
       <span class="leader-role">${leader.role}</span>
       <p class="leader-bio">${leader.bio}</p>
-      <div class="leader-hobbies">
-        ${leader.hobbies.map(h => `<span class="leader-hobby-tag">${h}</span>`).join('')}
-      </div>
       <p class="leader-motto">「${leader.motto}」</p>
     `;
     grid.appendChild(card);
@@ -120,9 +117,6 @@ function showStudentDetail(student) {
       <h2 class="student-detail-name">${student.name}</h2>
       ${student.role ? `<div class="student-detail-role">${student.role}</div>` : ''}
       <p class="student-detail-bio">${student.bio}</p>
-      <div class="student-detail-hobbies">
-        ${student.hobbies.map(h => `<span class="leader-hobby-tag">${h}</span>`).join('')}
-      </div>
       <p class="student-detail-motto">「${student.motto}」</p>
     </div>
   `;
