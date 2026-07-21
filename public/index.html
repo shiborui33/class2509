@@ -8,7 +8,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    // 加载 Supabase SDK
+    var supabaseScript = document.createElement('script');
+    supabaseScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+    supabaseScript.onload = function() {
+      console.log('✅ Supabase SDK 加载成功');
+      window.__supabaseReady = true;
+    };
+    supabaseScript.onerror = function() {
+      console.warn('⚠️ Supabase SDK 加载失败，将使用本地存储');
+    };
+    document.head.appendChild(supabaseScript);
+  </script>
 </head>
 <body>
   <!-- Navigation -->

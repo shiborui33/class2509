@@ -24,8 +24,16 @@ let realtimeChannel = null;
 
 function initSupabase() {
   if (!USE_SUPABASE) return false;
+  if (!window.__supabaseReady && typeof supabase === 'undefined') {
+    console.warn('Supabase SDK 未加载，降级到本地存储');
+    return false;
+  }
   try {
-    supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+    var client = (typeof supabase !== 'undefined' ? supabase : window.supabase);
+    supabase = client.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
+      db: { schema: 'public' }
+    });
+    console.log('✅ Supabase 客户端初始化成功');
     return true;
   } catch (err) {
     console.warn('Supabase 初始化失败，降级到本地存储:', err.message);
@@ -387,11 +395,11 @@ window._submitReply = submitReply;
 // ============================================
 
 document.getElementById('submitPost').addEventListener('click', async function() {
-  const btn = this;
-  const author = document.getElementById('postAuthor').value.trim();
-  const role = document.getElementById('postRole').value;
-  const title = document.getElementById('postTitle').value.trim();
-  const content = document.getElementById('postContent').value.trim();
+  var btn = this;
+  var author = document.getElementById('postAuthor').value.trim();
+  var role = document.getElementById('postRole').value;
+  var title = document.getElementById('postTitle').value.trim();
+  var content = document.getElementById('postContent').value.trim();
 
   if (!author || !title || !content) {
     alert('请填写名字、标题和内容');
@@ -401,39 +409,25 @@ document.getElementById('submitPost').addEventListener('click', async function()
   btn.textContent = '发布中...';
   btn.disabled = true;
 
-  const postData = { author, role: role || 'student', title, content };
-  let newPost = null;
+  // 先存入本地（保证必成功）
+  var newPost = savePostLocal({ author: author, role: role || 'student', title: title, content: content });
+  posts.unshift(newPost);
+  savePostsLocal();
+  renderPostList();
 
-  // Supabase 发帖（带5秒超时）
+  // 后台尝试同步到 Supabase
   if (USE_SUPABASE && supabase) {
     try {
-      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
-      newPost = await Promise.race([savePostToSupabase(postData), timeout]);
-    } catch (e) {
-      console.warn('Supabase发帖超时或失败，降级本地存储:', e.message);
-    }
-
-    if (newPost) {
-      posts.unshift({
-        id: newPost.id,
-        title: newPost.title,
-        author: newPost.author,
-        role: newPost.role,
-        content: newPost.content,
-        timestamp: newPost.created_at,
-        replies: []
+      await supabase.from('posts').insert({
+        title: title, author: author, role: role || 'student', content: content
       });
+      // 重新拉取线上数据
+      await loadPostsFromSupabase();
+      renderPostList();
+    } catch (e) {
+      console.warn('Supabase同步失败（数据已保存在本地）:', e.message);
     }
   }
-
-  // 降级：localStorage
-  if (!newPost) {
-    newPost = savePostLocal(postData);
-    posts.unshift(newPost);
-    savePostsLocal();
-  }
-
-  renderPostList();
 
   document.getElementById('postTitle').value = '';
   document.getElementById('postContent').value = '';
