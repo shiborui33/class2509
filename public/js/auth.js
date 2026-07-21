@@ -170,14 +170,6 @@ function updateNav() {
   if (!b) return;
   if (A.user) { b.textContent = A.user.display_name || A.user.email; b.style.color = 'var(--accent)'; }
   else { b.textContent = '登录'; b.style.color = ''; }
-
-  var tip = document.getElementById('composerLoginTip');
-  var fields = document.getElementById('composerFields');
-  var ae = document.getElementById('postAuthor'), re = document.getElementById('postRole');
-  if (tip) tip.style.display = A.user ? 'none' : 'block';
-  if (fields) fields.style.display = A.user ? '' : 'none';
-  if (ae) ae.parentElement.style.display = A.user ? 'none' : '';
-  if (re) re.parentElement.style.display = A.user ? 'none' : '';
 }
 
 // ============================================
