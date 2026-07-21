@@ -1116,6 +1116,7 @@ body {
    ============================================ */
 
 .modal-overlay {
+  display: none;
   position: fixed;
   inset: 0;
   background: rgba(26, 26, 36, 0.5);
