@@ -49,6 +49,12 @@ async function doLogin(username, password) {
 }
 
 async function doRegister(username, displayName, password) {
+  // 检查白名单
+  var wl = await af('/rest/v1/whitelist?name=eq.' + encodeURIComponent(displayName));
+  if (!wl.ok) throw new Error('验证失败');
+  var wlData = await wl.json();
+  if (wlData.length === 0) throw new Error('你的姓名不在班级名单中，无法注册');
+
   var email = toEmail(username);
   var r = await af('/auth/v1/signup', {
     method: 'POST',
