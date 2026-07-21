@@ -147,7 +147,7 @@ function setMode(login) {
   document.getElementById('authError').style.display = 'none';
   document.getElementById('authForm').style.display = 'block';
   document.getElementById('authUserInfo').style.display = 'none';
-  document.getElementById('authUsername').placeholder = login ? '输入你的账号' : '设置账号（英文或数字）';
+  document.getElementById('authUsername').placeholder = login ? '输入账号登录' : '设置账号（英文或数字，唯一）';
 }
 
 function showUserInfo() {
