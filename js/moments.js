@@ -1,5 +1,5 @@
 /**
- * 2509班 同学点滴 — 照片网格（仅管理员可上传）
+ * 2509班 同学点滴 — 照片网格+评论（仅管理员可上传）
  */
 var A = window.AUTH;
 var moments = [], useServer = false;
@@ -29,7 +29,6 @@ async function uploadImage(file) {
   return SB_URL + '/storage/v1/object/public/forum-files/' + path;
 }
 
-// 图片放大
 function zoomImage(url) {
   var overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer';
@@ -55,9 +54,13 @@ function initFilePicker() {
   });
 }
 
+// ============================================
+// 数据
+// ============================================
+
 async function loadMoments() {
   try {
-    var r = await sf('/rest/v1/moments?select=*&order=created_at.desc&limit=50');
+    var r = await sf('/rest/v1/moments?select=*,moment_comments(*)&order=created_at.desc&limit=50');
     if (!r.ok) throw new Error(r.status);
     moments = await r.json();
     return true;
@@ -72,10 +75,27 @@ async function saveMoment(content, imageUrl) {
   return r.ok;
 }
 
+async function saveComment(momentId, content) {
+  var r = await sf('/rest/v1/moment_comments', {
+    method: 'POST',
+    body: { moment_id: momentId, author: A.user.display_name, author_id: A.user.id, content: content }
+  });
+  return r.ok;
+}
+
 async function deleteMoment(id) {
   var r = await sf('/rest/v1/moments?id=eq.' + id, { method: 'DELETE' });
   return r.ok;
 }
+
+async function deleteComment(id) {
+  var r = await sf('/rest/v1/moment_comments?id=eq.' + id, { method: 'DELETE' });
+  return r.ok;
+}
+
+// ============================================
+// 渲染
+// ============================================
 
 function renderTimeline() {
   var c = document.getElementById('momentsTimeline');
@@ -86,65 +106,130 @@ function renderTimeline() {
     return;
   }
   c.style.display = '';
+
   moments.forEach(function(m, i) {
+    var comments = m.moment_comments || [];
     var card = document.createElement('div');
     card.className = 'moment-card';
     card.style.opacity = '0'; card.style.transform = 'translateY(20px)';
     card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
     card.style.transitionDelay = (i*0.06)+'s';
-    // 缩略图URL（Supabase图片转换加速）
+
     var thumbUrl = m.image_url ? m.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?width=600&quality=75' : '';
     var fullUrl = m.image_url || '';
     var imgHtml = fullUrl ? '<img src="'+thumbUrl+'" class="moment-image" loading="lazy" onclick="zoomImage(\''+fullUrl+'\')" />' : '';
+    var commentCount = comments.length;
+    var commentBadge = commentCount > 0 ? ' · 💬 '+commentCount : '';
+
     card.innerHTML =
       imgHtml +
       '<div class="moment-body">'+
         (m.content ? '<p class="moment-text">'+esc(m.content)+'</p>' : '')+
         '<div class="moment-footer">'+
-          '<span>'+fmt(m.created_at)+'</span>'+
-          (A.isAdmin ? '<span class="moment-delete" onclick="delMoment('+m.id+')">删除</span>' : '')+
+          '<span>'+fmt(m.created_at)+commentBadge+'</span>'+
+          '<span>'+
+            '<span class="moment-comment-btn" data-mid="'+m.id+'" style="cursor:pointer;color:var(--accent);font-size:0.8rem">评论</span>'+
+            (A.isAdmin ? ' <span class="moment-delete" onclick="delMoment('+m.id+')">删除</span>' : '')+
+          '</span>'+
         '</div>'+
+        (commentCount > 0 ? '<div class="moment-comments-list" id="comments-'+m.id+'">'+comments.slice(0,2).map(function(cm){return '<div class="moment-comment"><strong>'+esc(cm.author)+'</strong> '+esc(cm.content)+(A.isAdmin?' <span class="moment-delete" style="opacity:1" onclick="delComment('+cm.id+','+m.id+')">×</span>':'')+'</div>';}).join('')+(commentCount>2?'<div class="moment-comment" style="color:var(--text-muted);cursor:pointer" onclick="showAllComments('+m.id+')">查看全部 '+commentCount+' 条评论</div>':'')+'</div>' : '')+
       '</div>';
+
     c.appendChild(card);
     setTimeout(function() { card.style.opacity='1'; card.style.transform='none'; }, i*60+50);
   });
+
+  // 评论按钮事件
+  setTimeout(function() {
+    document.querySelectorAll('.moment-comment-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        showCommentInput(parseInt(this.dataset.mid));
+      });
+    });
+  }, 200);
 }
+
+function showCommentInput(momentId) {
+  var el = document.getElementById('comments-'+momentId);
+  var container = el ? el.parentElement : document.querySelector('.moment-card .moment-body');
+  if (document.getElementById('comment-input-'+momentId)) return;
+  var div = document.createElement('div');
+  div.id = 'comment-input-'+momentId;
+  div.style.cssText = 'margin-top:0.5rem;display:flex;gap:0.3rem';
+  div.innerHTML = '<input type="text" id="comment-text-'+momentId+'" class="composer-input" style="flex:1;font-size:0.85rem" placeholder="写评论..."><button onclick="submitComment('+momentId+')" class="btn btn-primary" style="font-size:0.8rem;padding:0.4rem 0.8rem">发送</button>';
+  var listEl = document.getElementById('comments-'+momentId);
+  if (listEl) listEl.parentElement.insertBefore(div, listEl.nextSibling);
+  else {
+    var bodyEl = document.querySelector('.moment-card .moment-body');
+    if (bodyEl) bodyEl.appendChild(div);
+  }
+  document.getElementById('comment-text-'+momentId).focus();
+}
+
+async function submitComment(momentId) {
+  if (!A.user) { alert('请先登录'); return; }
+  var input = document.getElementById('comment-text-'+momentId);
+  var content = input.value.trim();
+  if (!content) return;
+  if (useServer) {
+    var ok = await saveComment(momentId, content);
+    if (ok) { await loadMoments(); renderTimeline(); }
+    else alert('评论失败');
+  }
+}
+window.submitComment = submitComment;
+
+function showAllComments(momentId) {
+  var m = moments.find(function(x) { return x.id === momentId; });
+  if (!m) return;
+  var el = document.getElementById('comments-'+momentId);
+  if (!el) return;
+  el.innerHTML = (m.moment_comments||[]).map(function(cm) {
+    return '<div class="moment-comment"><strong>'+esc(cm.author)+'</strong> '+esc(cm.content)+(A.isAdmin?' <span class="moment-delete" style="opacity:1" onclick="delComment('+cm.id+','+momentId+')">×</span>':'')+'</div>';
+  }).join('');
+}
+
+async function delMoment(id) {
+  if (!confirm('确认删除？')) return;
+  if (useServer) { await deleteMoment(id); await loadMoments(); renderTimeline(); }
+}
+async function delComment(cid, mid) {
+  if (!confirm('删除评论？')) return;
+  if (useServer) { await deleteComment(cid); await loadMoments(); renderTimeline(); }
+}
+window.delMoment = delMoment;
+window.delComment = delComment;
+window.showAllComments = showAllComments;
+
+// ============================================
+// 发点滴
+// ============================================
 
 document.getElementById('submitMoment').addEventListener('click', async function() {
   if (!A.user || !A.isAdmin) { alert('仅管理员可上传'); return; }
   var content = document.getElementById('momentContent').value.trim();
   var imgInput = document.getElementById('momentImage');
   if (!imgInput || imgInput.files.length === 0) { alert('请选择照片'); return; }
-  var btn = this;
-  var files = Array.from(imgInput.files);
-  btn.textContent = '上传中 0/' + files.length;
-  btn.disabled = true;
-
+  var btn = this; var files = Array.from(imgInput.files);
+  btn.textContent = '上传中 0/' + files.length; btn.disabled = true;
   for (var i = 0; i < files.length; i++) {
     btn.textContent = '上传中 ' + (i+1) + '/' + files.length;
     try {
       var imageUrl = await uploadImage(files[i]);
       if (useServer) await saveMoment(i === files.length-1 ? content : '', imageUrl);
-    } catch(e) {
-      alert('第'+(i+1)+'张上传失败: '+e.message);
-      btn.textContent = '发布'; btn.disabled = false;
-      return;
-    }
+    } catch(e) { alert('第'+(i+1)+'张上传失败: '+e.message); btn.textContent='发布'; btn.disabled=false; return; }
   }
-
   if (useServer) { await loadMoments(); renderTimeline(); }
   document.getElementById('momentContent').value = '';
-  imgInput.value = '';
-  document.getElementById('momentPreview').style.display = 'none';
+  imgInput.value = ''; document.getElementById('momentPreview').style.display = 'none';
   document.getElementById('clearMomentImage').style.display = 'none';
   btn.textContent = '发布'; btn.disabled = false;
 });
 
-async function delMoment(id) {
-  if (!confirm('确认删除？')) return;
-  if (useServer) { await deleteMoment(id); await loadMoments(); renderTimeline(); }
-}
-window.delMoment = delMoment;
+// ============================================
+// Utils
+// ============================================
 
 function fmt(t) {
   if(!t) return ''; var d=new Date(t),n=new Date(),diff=n-d;
@@ -155,6 +240,10 @@ function fmt(t) {
 function p2(v) { return v<10?'0'+v:''+v; }
 function esc(s) { var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
+// ============================================
+// Init
+// ============================================
+
 async function init() {
   if (!A.ready) return;
   useServer = await loadMoments();
@@ -163,7 +252,6 @@ async function init() {
   renderTimeline();
   initFilePicker();
 }
-
 window.onAuthReady = function() { init(); };
 window.onAuthChanged = function() {
   var composer = document.getElementById('momentsComposer');
