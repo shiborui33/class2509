@@ -926,9 +926,21 @@ body {
   background: var(--card);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 1px 3px rgba(13,13,26,0.04), 0 8px 24px rgba(13,13,26,0.06);
   border: 1px solid var(--border);
   margin-bottom: var(--space-xl);
+  position: relative;
+}
+
+.forum-composer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-glow), var(--accent));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 .composer-title {
@@ -1023,36 +1035,35 @@ body {
 .post-card {
   background: var(--card);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-shadow: 0 1px 2px rgba(13, 13, 26, 0.02);
+  padding: 1.5rem;
+  box-shadow: 0 1px 2px rgba(13,13,26,0.02);
   border: 1px solid var(--border);
   cursor: pointer;
-  transition: all 0.3s var(--ease-out);
+  transition: all 0.25s var(--ease-out);
   position: relative;
 }
 
-.post-card::before {
+.post-card::after {
   content: '';
   position: absolute;
-  top: 0;
   left: 0;
-  bottom: 0;
+  top: 20%;
+  bottom: 20%;
   width: 3px;
   background: var(--accent);
-  border-radius: 3px 0 0 3px;
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.3s var(--ease-out);
+  border-radius: 0 3px 3px 0;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .post-card:hover {
-  box-shadow: 0 4px 24px rgba(13, 13, 26, 0.07);
+  box-shadow: 0 4px 24px rgba(13,13,26,0.08);
   border-color: var(--border-strong);
-  transform: translateX(4px);
+  transform: translateX(2px);
 }
 
-.post-card:hover::before {
-  transform: scaleY(1);
+.post-card:hover::after {
+  opacity: 1;
 }
 
 .post-card-header {
@@ -1279,6 +1290,90 @@ body {
   font-size: 1rem;
   margin-bottom: var(--space-sm);
   color: var(--ink);
+}
+
+/* ============================================
+   同学点滴
+   ============================================ */
+
+#momentsTimeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.moment-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(13,13,26,0.03), 0 4px 16px rgba(13,13,26,0.05);
+  border: 1px solid var(--border);
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s;
+}
+
+.moment-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(13,13,26,0.10);
+}
+
+.moment-image {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  max-height: 350px;
+  background: var(--bg-alt);
+}
+
+.moment-body {
+  padding: 1rem 1.2rem 1.2rem;
+}
+
+.moment-text {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--ink-light);
+  margin-bottom: 0.8rem;
+}
+
+.moment-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.moment-author {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.moment-delete {
+  color: #e53e3e;
+  cursor: pointer;
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.moment-card:hover .moment-delete {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  #momentsTimeline {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #momentsTimeline {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+  .moment-body { padding: 0.7rem 0.8rem 0.8rem; }
+  .moment-text { font-size: 0.82rem; }
 }
 
 /* ============================================
@@ -1968,8 +2063,8 @@ body {
     border-color: var(--border);
   }
 
-  .post-card:hover::before {
-    transform: scaleY(0);
+  .post-card:hover::after {
+    opacity: 0;
   }
 
   .btn-primary:hover {

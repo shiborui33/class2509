@@ -1,5 +1,5 @@
 /**
- * 2509班 同学点滴 — 照片+文字时间线
+ * 2509班 同学点滴 — 照片网格（仅管理员可上传）
  */
 var A = window.AUTH;
 var moments = [], useServer = false;
@@ -17,7 +17,6 @@ function sf(path, options) {
   return fetch(SB_URL + path, options);
 }
 
-// 上传图片
 async function uploadImage(file) {
   if (file.size > 10485760) throw new Error('图片不能超过10MB');
   var path = 'moments/' + Date.now() + '_' + Math.random().toString(36).slice(2,6) + '.' + file.name.split('.').pop();
@@ -30,7 +29,6 @@ async function uploadImage(file) {
   return SB_URL + '/storage/v1/object/public/forum-files/' + path;
 }
 
-// 文件选择预览
 function initFilePicker() {
   var input = document.getElementById('momentImage');
   var preview = document.getElementById('momentPreview');
@@ -46,10 +44,6 @@ function initFilePicker() {
     input.value = ''; preview.style.display = 'none'; this.style.display = 'none';
   });
 }
-
-// ============================================
-// 数据
-// ============================================
 
 async function loadMoments() {
   try {
@@ -73,86 +67,62 @@ async function deleteMoment(id) {
   return r.ok;
 }
 
-// ============================================
-// 渲染
-// ============================================
-
 function renderTimeline() {
   var c = document.getElementById('momentsTimeline');
   c.innerHTML = '';
-
   if (moments.length === 0) {
-    c.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted)"><p style="font-size:3rem;margin-bottom:1rem">📸</p><p>还没有点滴，来分享第一张照片吧</p></div>';
+    c.style.display = 'block';
+    c.innerHTML = '<div style="text-align:center;padding:4rem 1rem;color:var(--text-muted)"><p style="font-size:3rem;margin-bottom:1rem">📸</p><p style="font-size:1.1rem">还没有点滴，等待管理员上传照片</p></div>';
     return;
   }
-
+  c.style.display = '';
   moments.forEach(function(m, i) {
     var card = document.createElement('div');
-    card.style.cssText = 'background:var(--card);border-radius:var(--radius-lg);padding:1.2rem;margin-bottom:1rem;box-shadow:0 1px 2px rgba(13,13,26,0.03),0 4px 16px rgba(13,13,26,0.05);border:1px solid var(--border);opacity:0;transform:translateY(20px);transition:opacity 0.6s ease-out,transform 0.6s ease-out';
-    card.style.transitionDelay = (i*0.05)+'s';
-
-    var imgHtml = m.image_url ? '<div style="margin-top:0.8rem"><img src="'+m.image_url+'" style="width:100%;border-radius:8px;max-height:500px;object-fit:cover" loading="lazy" /></div>' : '';
-
+    card.className = 'moment-card';
+    card.style.opacity = '0'; card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+    card.style.transitionDelay = (i*0.06)+'s';
+    var imgHtml = m.image_url ? '<img src="'+m.image_url+'" class="moment-image" loading="lazy" />' : '';
     card.innerHTML =
-      '<div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:0.5rem">'+
-        '<div style="width:36px;height:36px;border-radius:50%;background:var(--bg-alt);display:flex;align-items:center;justify-content:center;font-family:Ma+Shan+Zheng,cursive;font-size:1.1rem;color:var(--accent);flex-shrink:0">'+m.author.charAt(0)+'</div>'+
-        '<div style="flex:1"><strong style="font-size:0.9rem">'+esc(m.author)+'</strong><br><span style="font-size:0.75rem;color:var(--text-light)">'+fmt(m.created_at)+'</span></div>'+
-        (A.isAdmin ? '<span style="color:#e53e3e;cursor:pointer;font-size:0.75rem" onclick="delMoment('+m.id+')">删除</span>' : '')+
-      '</div>'+
-      (m.content ? '<p style="font-size:0.95rem;line-height:1.7;color:var(--ink-light);margin-bottom:0">'+esc(m.content)+'</p>' : '')+
-      imgHtml;
-
+      imgHtml +
+      '<div class="moment-body">'+
+        (m.content ? '<p class="moment-text">'+esc(m.content)+'</p>' : '')+
+        '<div class="moment-footer">'+
+          '<span><span class="moment-author">'+esc(m.author)+'</span> · '+fmt(m.created_at)+'</span>'+
+          (A.isAdmin ? '<span class="moment-delete" onclick="delMoment('+m.id+')">删除</span>' : '')+
+        '</div>'+
+      '</div>';
     c.appendChild(card);
-
-    // 触发动画
-    setTimeout(function() { card.style.opacity = '1'; card.style.transform = 'none'; }, i*60+100);
+    setTimeout(function() { card.style.opacity='1'; card.style.transform='none'; }, i*60+50);
   });
 }
 
-// ============================================
-// 发点滴
-// ============================================
-
 document.getElementById('submitMoment').addEventListener('click', async function() {
-  if (!A.user) { alert('请先登录'); return; }
+  if (!A.user || !A.isAdmin) { alert('仅管理员可上传'); return; }
   var content = document.getElementById('momentContent').value.trim();
-  var imageInput = document.getElementById('momentImage');
-  if (!content && (!imageInput || !imageInput.files[0])) { alert('请填写文字或选择照片'); return; }
-
-  var btn = this; btn.textContent = '发布中...'; btn.disabled = true;
-
+  var imgInput = document.getElementById('momentImage');
+  if (!imgInput || !imgInput.files[0]) { alert('请选择照片'); return; }
+  var btn = this; btn.textContent = '上传中...'; btn.disabled = true;
   var imageUrl = null;
-  if (imageInput && imageInput.files[0]) {
-    try { imageUrl = await uploadImage(imageInput.files[0]); }
-    catch(e) { alert('图片上传失败: '+e.message); btn.textContent='发布'; btn.disabled=false; return; }
-  }
-
+  try { imageUrl = await uploadImage(imgInput.files[0]); }
+  catch(e) { alert('上传失败: '+e.message); btn.textContent='发布'; btn.disabled=false; return; }
   if (useServer) {
     var ok = await saveMoment(content, imageUrl);
     if (ok) { await loadMoments(); renderTimeline(); }
     else alert('发布失败');
   }
-
   document.getElementById('momentContent').value = '';
-  if (imageInput) imageInput.value = '';
+  imgInput.value = '';
   document.getElementById('momentPreview').style.display = 'none';
   document.getElementById('clearMomentImage').style.display = 'none';
   btn.textContent = '发布'; btn.disabled = false;
 });
-
-// ============================================
-// 删除
-// ============================================
 
 async function delMoment(id) {
   if (!confirm('确认删除？')) return;
   if (useServer) { await deleteMoment(id); await loadMoments(); renderTimeline(); }
 }
 window.delMoment = delMoment;
-
-// ============================================
-// Utils
-// ============================================
 
 function fmt(t) {
   if(!t) return ''; var d=new Date(t),n=new Date(),diff=n-d;
@@ -163,16 +133,20 @@ function fmt(t) {
 function p2(v) { return v<10?'0'+v:''+v; }
 function esc(s) { var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
-// ============================================
-// Init
-// ============================================
-
 async function init() {
   if (!A.ready) return;
   useServer = await loadMoments();
+  var composer = document.getElementById('momentsComposer');
+  if (composer && A.isAdmin) composer.style.display = '';
   renderTimeline();
   initFilePicker();
 }
 
 window.onAuthReady = function() { init(); };
+window.onAuthChanged = function() {
+  var composer = document.getElementById('momentsComposer');
+  if (composer && A.isAdmin) composer.style.display = '';
+  else if (composer) composer.style.display = 'none';
+  init();
+};
 if (A.ready) init();

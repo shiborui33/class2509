@@ -38,15 +38,15 @@
         <p class="section-subtitle">记录我们一起走过的日子</p>
       </div>
 
-      <!-- Publisher -->
-      <div class="forum-composer" id="momentsComposer" style="margin-bottom:2rem">
-        <h3 class="composer-title">分享瞬间</h3>
+      <!-- Publisher (仅管理员可见) -->
+      <div class="forum-composer" id="momentsComposer" style="margin-bottom:2rem;display:none">
+        <h3 class="composer-title">上传照片</h3>
         <div class="composer-fields">
-          <textarea id="momentContent" class="composer-textarea" rows="2" placeholder="说点什么..."></textarea>
+          <textarea id="momentContent" class="composer-textarea" rows="2" placeholder="给这张照片配一段文字..."></textarea>
           <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem">
             <label for="momentImage" style="cursor:pointer;display:flex;align-items:center;gap:0.3rem;font-size:0.85rem;color:var(--text-muted);padding:0.4rem 0.8rem;border:1px dashed var(--border);border-radius:6px">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-              添加照片
+              选择照片
             </label>
             <input type="file" id="momentImage" accept="image/*" style="display:none">
             <span id="momentPreview" style="font-size:0.8rem;color:var(--accent);display:none"></span>
