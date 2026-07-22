@@ -78,22 +78,49 @@ function renderStudents(students) {
   const grid = document.getElementById('studentsGrid');
   grid.innerHTML = '';
 
-  students.forEach((student, i) => {
-    const initial = student.name.charAt(0);
-    const card = document.createElement('div');
-    card.className = 'student-card reveal';
-    card.style.transitionDelay = `${i * 0.03}s`;
-    card.innerHTML = `
-      <div class="student-avatar">${initial}</div>
-      <div class="student-info">
-        <div class="student-name">${student.name}</div>
-        ${student.role ? `<span class="student-role-badge">${student.role}</span>` : ''}
-        <p class="student-bio">${student.bio}</p>
-      </div>
-    `;
-    card.addEventListener('click', () => showStudentDetail(student));
-    grid.appendChild(card);
-  });
+  const isMobile = window.innerWidth <= 480;
+  const showLimit = isMobile ? 9 : students.length; // 手机端只显示9个（3行）
+  const displayStudents = students.slice(0, showLimit);
+  const hasMore = students.length > showLimit;
+
+  function renderCards(list, startIdx) {
+    list.forEach((student, i) => {
+      const idx = startIdx + i;
+      const initial = student.name.charAt(0);
+      const card = document.createElement('div');
+      card.className = 'student-card reveal';
+      card.style.transitionDelay = `${idx * 0.03}s`;
+      card.innerHTML = `
+        <div class="student-avatar">${initial}</div>
+        <div class="student-info">
+          <div class="student-name">${student.name}</div>
+          ${student.role ? `<span class="student-role-badge">${student.role}</span>` : ''}
+          <p class="student-bio">${student.bio}</p>
+        </div>
+      `;
+      card.addEventListener('click', () => showStudentDetail(student));
+      grid.appendChild(card);
+    });
+  }
+
+  renderCards(displayStudents, 0);
+
+  if (hasMore) {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-primary';
+    btn.style.cssText = 'grid-column:1/-1;margin-top:0.5rem;font-size:0.9rem';
+    btn.textContent = `展开全部 ${students.length} 位同学 ↓`;
+    btn.addEventListener('click', function() {
+      renderCards(students.slice(showLimit), showLimit);
+      btn.remove();
+      requestAnimationFrame(() => {
+        document.querySelectorAll('#studentsGrid .reveal:not(.visible)').forEach((el, i) => {
+          setTimeout(() => el.classList.add('visible'), i * 50);
+        });
+      });
+    });
+    grid.appendChild(btn);
+  }
 
   requestAnimationFrame(() => {
     document.querySelectorAll('#studentsGrid .reveal').forEach((el, i) => {
