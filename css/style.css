@@ -1614,6 +1614,7 @@ body {
 
   /* ---- 交流区 ---- */
   #forumPage { padding-top: 5rem !important; }
+  #momentsPage { padding-top: 5rem !important; }
 
   .forum-composer {
     padding: var(--space-md);
@@ -1868,6 +1869,7 @@ body {
 
   /* 交流区 */
   #forumPage { padding-top: 4rem !important; }
+  #momentsPage { padding-top: 4rem !important; }
 
   .forum-composer {
     padding: var(--space-sm);
