@@ -138,7 +138,8 @@ function renderPostList() {
     var card = document.createElement('div');
     card.className = 'post-card reveal';
     card.style.transitionDelay = (i*0.05)+'s';
-    var mediaHtml = p.media_url ? '<div style="margin-top:0.5rem">'+(p.media_type==='video'?'<video src="'+p.media_url+'" controls style="max-width:100%;max-height:200px;border-radius:8px"></video>':'<img src="'+p.media_url+'" style="max-width:100%;max-height:200px;border-radius:8px;object-fit:cover" />')+'</div>' : '';
+    var thumbUrl = (p.media_url && p.media_type !== 'video') ? p.media_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?width=400&quality=70' : p.media_url;
+    var mediaHtml = p.media_url ? '<div style="margin-top:0.5rem">'+(p.media_type==='video'?'<video src="'+p.media_url+'" controls style="max-width:100%;max-height:200px;border-radius:8px"></video>':'<img src="'+thumbUrl+'" style="max-width:100%;max-height:200px;border-radius:8px;object-fit:cover" loading="lazy" />')+'</div>' : '';
     card.innerHTML =
       '<div class="post-card-header"><div class="post-author-avatar">'+p.author.charAt(0)+'</div><div class="post-card-meta"><div class="post-card-author">'+esc(p.author)+' <span class="post-card-role '+p.role+'">'+(p.role==='teacher'?'老师':p.role==='admin'?'管理员':'同学')+'</span></div><span class="post-card-date">'+fmt(p.timestamp)+'</span></div></div>'+
       '<h3 class="post-card-title">'+esc(p.title)+'</h3><p class="post-card-preview">'+esc(p.content)+'</p>'+mediaHtml+
@@ -161,7 +162,7 @@ function renderPostList() {
 function showDetail(p) {
   var m = document.getElementById('postModal');
   var ct = document.getElementById('modalContent');
-  var mediaHtml = p.media_url ? '<div style="margin-top:1rem">'+(p.media_type==='video'?'<video src="'+p.media_url+'" controls style="max-width:100%;max-height:400px;border-radius:12px"></video>':'<img src="'+p.media_url+'" style="max-width:100%;max-height:400px;border-radius:12px;object-fit:contain" />')+'</div>' : '';
+  var mediaHtml = p.media_url ? '<div style="margin-top:1rem">'+(p.media_type==='video'?'<video src="'+p.media_url+'" controls style="max-width:100%;max-height:400px;border-radius:12px"></video>':'<img src="'+p.media_url+'" style="max-width:100%;max-height:400px;border-radius:12px;object-fit:contain" loading="lazy" />')+'</div>' : '';
   ct.innerHTML =
     '<h2 class="modal-post-title">'+esc(p.title)+'</h2>'+
     '<div class="modal-post-meta"><div class="post-author-avatar">'+p.author.charAt(0)+'</div><div><span class="post-card-author">'+esc(p.author)+' <span class="post-card-role '+p.role+'">'+(p.role==='teacher'?'老师':'同学')+'</span></span><div class="post-card-date">'+fmt(p.timestamp)+'</div></div></div>'+
