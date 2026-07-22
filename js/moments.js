@@ -29,6 +29,16 @@ async function uploadImage(file) {
   return SB_URL + '/storage/v1/object/public/forum-files/' + path;
 }
 
+// 图片放大
+function zoomImage(url) {
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer';
+  overlay.innerHTML = '<img src="'+url+'" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:4px" />';
+  overlay.addEventListener('click', function() { overlay.remove(); });
+  document.addEventListener('keydown', function esc(e) { if(e.key==='Escape'){overlay.remove();document.removeEventListener('keydown',esc);} });
+  document.body.appendChild(overlay);
+}
+
 function initFilePicker() {
   var input = document.getElementById('momentImage');
   var preview = document.getElementById('momentPreview');
@@ -82,13 +92,13 @@ function renderTimeline() {
     card.style.opacity = '0'; card.style.transform = 'translateY(20px)';
     card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
     card.style.transitionDelay = (i*0.06)+'s';
-    var imgHtml = m.image_url ? '<img src="'+m.image_url+'" class="moment-image" loading="lazy" />' : '';
+    var imgHtml = m.image_url ? '<img src="'+m.image_url+'" class="moment-image" loading="lazy" onclick="zoomImage(\''+m.image_url+'\')" />' : '';
     card.innerHTML =
       imgHtml +
       '<div class="moment-body">'+
         (m.content ? '<p class="moment-text">'+esc(m.content)+'</p>' : '')+
         '<div class="moment-footer">'+
-          '<span><span class="moment-author">'+esc(m.author)+'</span> · '+fmt(m.created_at)+'</span>'+
+          '<span>'+fmt(m.created_at)+'</span>'+
           (A.isAdmin ? '<span class="moment-delete" onclick="delMoment('+m.id+')">删除</span>' : '')+
         '</div>'+
       '</div>';
