@@ -35,9 +35,9 @@ function initFilePicker() {
   var clear = document.getElementById('clearMomentImage');
   if (!input) return;
   input.addEventListener('change', function() {
-    var f = this.files[0];
-    if (!f) return;
-    preview.textContent = '📷 ' + f.name;
+    var count = this.files.length;
+    if (count === 0) return;
+    preview.textContent = count === 1 ? '📷 ' + this.files[0].name : '📷 已选择 ' + count + ' 张照片';
     preview.style.display = 'inline'; clear.style.display = 'inline';
   });
   clear.addEventListener('click', function() {
@@ -101,16 +101,25 @@ document.getElementById('submitMoment').addEventListener('click', async function
   if (!A.user || !A.isAdmin) { alert('仅管理员可上传'); return; }
   var content = document.getElementById('momentContent').value.trim();
   var imgInput = document.getElementById('momentImage');
-  if (!imgInput || !imgInput.files[0]) { alert('请选择照片'); return; }
-  var btn = this; btn.textContent = '上传中...'; btn.disabled = true;
-  var imageUrl = null;
-  try { imageUrl = await uploadImage(imgInput.files[0]); }
-  catch(e) { alert('上传失败: '+e.message); btn.textContent='发布'; btn.disabled=false; return; }
-  if (useServer) {
-    var ok = await saveMoment(content, imageUrl);
-    if (ok) { await loadMoments(); renderTimeline(); }
-    else alert('发布失败');
+  if (!imgInput || imgInput.files.length === 0) { alert('请选择照片'); return; }
+  var btn = this;
+  var files = Array.from(imgInput.files);
+  btn.textContent = '上传中 0/' + files.length;
+  btn.disabled = true;
+
+  for (var i = 0; i < files.length; i++) {
+    btn.textContent = '上传中 ' + (i+1) + '/' + files.length;
+    try {
+      var imageUrl = await uploadImage(files[i]);
+      if (useServer) await saveMoment(i === files.length-1 ? content : '', imageUrl);
+    } catch(e) {
+      alert('第'+(i+1)+'张上传失败: '+e.message);
+      btn.textContent = '发布'; btn.disabled = false;
+      return;
+    }
   }
+
+  if (useServer) { await loadMoments(); renderTimeline(); }
   document.getElementById('momentContent').value = '';
   imgInput.value = '';
   document.getElementById('momentPreview').style.display = 'none';
