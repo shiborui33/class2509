@@ -1296,6 +1296,10 @@ body {
    同学点滴
    ============================================ */
 
+.moment-author {
+  display: none;
+}
+
 #momentsTimeline {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1369,11 +1373,13 @@ body {
 
 @media (max-width: 480px) {
   #momentsTimeline {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.6rem;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
   }
-  .moment-body { padding: 0.7rem 0.8rem 0.8rem; }
-  .moment-text { font-size: 0.82rem; }
+  .moment-image { max-height: 450px; }
+  .moment-body { padding: 0.8rem; }
+  .moment-text { font-size: 0.9rem; }
+  .moment-footer { font-size: 0.8rem; }
 }
 
 /* ============================================
