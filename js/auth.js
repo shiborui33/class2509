@@ -153,7 +153,7 @@ function setMode(login) {
   document.getElementById('authError').style.display = 'none';
   document.getElementById('authForm').style.display = 'block';
   document.getElementById('authUserInfo').style.display = 'none';
-  document.getElementById('authUsername').placeholder = login ? '输入账号登录' : '设置账号（英文或数字，唯一）';
+  document.getElementById('authUsername').placeholder = login ? '输入账号登录' : '设置账号（姓名小写拼音，如 zhangwei）';
 }
 
 function showUserInfo() {
