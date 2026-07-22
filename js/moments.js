@@ -92,7 +92,10 @@ function renderTimeline() {
     card.style.opacity = '0'; card.style.transform = 'translateY(20px)';
     card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
     card.style.transitionDelay = (i*0.06)+'s';
-    var imgHtml = m.image_url ? '<img src="'+m.image_url+'" class="moment-image" loading="lazy" onclick="zoomImage(\''+m.image_url+'\')" />' : '';
+    // 缩略图URL（Supabase图片转换加速）
+    var thumbUrl = m.image_url ? m.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?width=600&quality=75' : '';
+    var fullUrl = m.image_url || '';
+    var imgHtml = fullUrl ? '<img src="'+thumbUrl+'" class="moment-image" loading="lazy" onclick="zoomImage(\''+fullUrl+'\')" />' : '';
     card.innerHTML =
       imgHtml +
       '<div class="moment-body">'+
