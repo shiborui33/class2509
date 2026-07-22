@@ -1364,6 +1364,28 @@ body {
   opacity: 1;
 }
 
+.moment-comment-btn {
+  transition: opacity 0.3s;
+}
+
+.moment-comments-list {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+}
+
+.moment-comment {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  padding: 0.3rem 0;
+  color: var(--ink-light);
+}
+
+.moment-comment strong {
+  color: var(--ink);
+  margin-right: 0.3rem;
+}
+
 @media (max-width: 768px) {
   #momentsTimeline {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
