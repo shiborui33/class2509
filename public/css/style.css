@@ -2135,3 +2135,61 @@ body {
     align-items: center;
   }
 }
+
+/* ============================================
+   UI 体验优化（追加）
+   ============================================ */
+
+/* 回到顶部按钮 */
+#backToTop {
+  position: fixed;
+  right: 1.2rem;
+  bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px));
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--ink);
+  color: #fff;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out), background 0.3s;
+  z-index: 900;
+}
+#backToTop.visible { opacity: 1; transform: none; pointer-events: auto; }
+#backToTop:hover { background: var(--accent); }
+#backToTop:active { transform: scale(0.92); }
+
+/* 按钮按压反馈 */
+.btn:active { transform: scale(0.96); }
+
+/* 卡片触摸反馈（触摸设备） */
+@media (hover: none) and (pointer: coarse) {
+  .post-card:active, .moment-card:active, .student-card:active, .leader-card:active {
+    transform: scale(0.985);
+  }
+}
+
+/* 刘海屏安全区适配 */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .nav-links { padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px)); }
+  .footer { padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* 移动端细节 */
+@media (max-width: 480px) {
+  .composer-fields { width: 100%; }
+  .composer-input--full { width: 100%; }
+  .composer-textarea { width: 100%; }
+  .moment-like-btn, .moment-comment-btn { padding: 6px 8px; margin: -6px -8px; }
+  #backToTop { right: 0.9rem; bottom: calc(0.9rem + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* 图片占位背景（防加载闪白） */
+img { background-color: var(--bg-alt); }
+.moment-image, .post-card img, .modal-post-body img { transition: opacity 0.3s; }
